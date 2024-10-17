@@ -4,11 +4,18 @@ const dotenv = require("dotenv");
 const productRoutes = require("./routes/recipes.route");
 const authRoutes = require("./routes/auth.route");
 const recipeBookRoutes = require("./routes/recipeBook.route");
+const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+const corsOptions = {
+  origin: "http://localhost:3000",
+};
+
+app.use(cors(corsOptions));
 
 // middlewares
 app.use(express.json());
