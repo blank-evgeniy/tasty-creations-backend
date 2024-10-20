@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const productRoutes = require("./routes/recipes.route");
 const authRoutes = require("./routes/auth.route");
 const recipeBookRoutes = require("./routes/recipeBook.route");
+const categoryRoutes = require("./routes/category.route");
 const cors = require("cors");
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use("/api/recipes", productRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/recipe_book", recipeBookRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.get("/", (req, res) => {
   res.send("hello world");

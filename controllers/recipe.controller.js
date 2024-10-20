@@ -1,8 +1,20 @@
+const Category = require("../models/category.model.js");
 const Recipe = require("../models/recipe.model.js");
 
 const getRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find({});
+    const { category } = req.query; // Получаем category из query параметров
+
+    let recipes;
+
+    if (category) {
+      // Если category указан, ищем по категории
+      recipes = await Recipe.find({ category: category });
+    } else {
+      // Если category не указан, возвращаем все рецепты
+      recipes = await Recipe.find({});
+    }
+
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -21,7 +33,6 @@ const getRecipeById = async (req, res) => {
 
 const createRecipe = async (req, res) => {
   try {
-    console.log(req.body);
     const recipe = await Recipe.create(req.body);
     res.status(200).json(recipe);
   } catch (error) {

@@ -9,7 +9,7 @@ const RecipeBookSchema = new mongoose.Schema({
   },
   recipes: {
     type: [mongoose.Schema.ObjectId],
-    reg: "Recipe",
+    ref: "Recipe",
   },
 });
 
