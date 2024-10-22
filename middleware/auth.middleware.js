@@ -4,7 +4,7 @@ const authMiddleware = (req, res, next) => {
   const token = req.headers["authorization"];
 
   if (!token) {
-    return res.status(401).send("Access denied");
+    return res.status(401).json({ message: "Acces denied" });
   }
 
   // Удаляем "Bearer " из токена, если он есть
@@ -12,7 +12,9 @@ const authMiddleware = (req, res, next) => {
 
   jwt.verify(bearerToken, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).send("Invalid token");
+      return res
+        .status(403)
+        .json({ message: "Invalid token", error: err.message });
     }
 
     // Сохраняем информацию о пользователе в объекте запроса

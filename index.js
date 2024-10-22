@@ -5,6 +5,7 @@ const productRoutes = require("./routes/recipes.route");
 const authRoutes = require("./routes/auth.route");
 const recipeBookRoutes = require("./routes/recipeBook.route");
 const categoryRoutes = require("./routes/category.route");
+const profileRoutes = require("./routes/profile.route");
 const cors = require("cors");
 
 dotenv.config();
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
   origin: "http://localhost:3000",
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -26,6 +28,7 @@ app.use("/api/recipes", productRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/recipe_book", recipeBookRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.get("/", (req, res) => {
   res.send("hello world");

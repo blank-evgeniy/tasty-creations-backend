@@ -9,6 +9,9 @@ const CategorySchema = new mongoose.Schema({
   icon: {
     type: String,
   },
+  path: {
+    type: String,
+  },
 });
 
 const Category = mongoose.model("Category", CategorySchema);
