@@ -9,6 +9,21 @@ const getCategories = async (req, res) => {
   }
 };
 
+const getCategoryByPath = async (req, res) => {
+  try {
+    const { path } = req.params;
+    const category = await Category.findOne({ path });
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.status(200).json(category);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
@@ -52,6 +67,7 @@ const deleteCategory = async (req, res) => {
 
 module.exports = {
   getCategories,
+  getCategoryByPath,
   createCategory,
   deleteCategory,
   updateCategory,

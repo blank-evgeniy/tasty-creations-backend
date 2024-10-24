@@ -11,6 +11,8 @@ const CategorySchema = new mongoose.Schema({
   },
   path: {
     type: String,
+    required: true,
+    unique: true,
   },
 });
 

@@ -3,15 +3,19 @@ const Recipe = require("../models/recipe.model.js");
 
 const getRecipes = async (req, res) => {
   try {
-    const { category } = req.query; // Получаем category из query параметров
+    const { category: categoryPath } = req.query; // Получаем category из query параметров
 
     let recipes;
 
-    if (category) {
-      // Если category указан, ищем по категории
-      recipes = await Recipe.find({ category: category });
+    if (categoryPath) {
+      const category = await Category.findOne({ path: categoryPath });
+
+      if (!category) {
+        return res.status(404).json({ message: "Категория не найдена" });
+      }
+
+      recipes = await Recipe.find({ category: category._id });
     } else {
-      // Если category не указан, возвращаем все рецепты
       recipes = await Recipe.find({});
     }
 
