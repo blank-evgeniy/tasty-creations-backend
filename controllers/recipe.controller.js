@@ -3,9 +3,12 @@ const Recipe = require("../models/recipe.model.js");
 
 const getRecipes = async (req, res) => {
   try {
-    const { category: categoryPath } = req.query; // Получаем category из query параметров
+    const { category: categoryPath, limit = 10, page = 1 } = req.query; // Получаем category из query параметров
 
+    const limitNumber = parseInt(limit);
+    const pageNumber = parseInt(page);
     let recipes;
+    let totalRecipes;
 
     if (categoryPath) {
       const category = await Category.findOne({ path: categoryPath });
@@ -14,12 +17,26 @@ const getRecipes = async (req, res) => {
         return res.status(404).json({ message: "Категория не найдена" });
       }
 
-      recipes = await Recipe.find({ category: category._id });
+      recipes = await Recipe.find({ category: category._id })
+        .limit(limitNumber)
+        .skip((pageNumber - 1) * limitNumber);
+
+      totalRecipes = await Recipe.find({
+        category: category._id,
+      }).countDocuments();
     } else {
-      recipes = await Recipe.find({});
+      recipes = await Recipe.find({})
+        .limit(limitNumber)
+        .skip((pageNumber - 1) * limitNumber);
+
+      totalRecipes = await Recipe.countDocuments();
     }
 
-    res.status(200).json(recipes);
+    const totalPages = Math.ceil(totalRecipes / limitNumber);
+
+    res
+      .status(200)
+      .json({ totalRecipes, totalPages, currentPage: pageNumber, recipes });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

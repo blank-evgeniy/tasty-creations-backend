@@ -10,6 +10,12 @@ const register = async (req, res) => {
 
   const user = new User({ username, password: hashedPassword, role });
 
+  const existingUser = await User.findOne({ username });
+
+  if (existingUser) {
+    return res.status(409).json({ message: "Username already taken" });
+  }
+
   try {
     const newUser = await user.save();
 
@@ -19,7 +25,7 @@ const register = async (req, res) => {
 
     res.status(201).send("User registered");
   } catch (err) {
-    res.status(400).send(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 

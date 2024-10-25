@@ -12,9 +12,13 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowlist = [
+  "http://localhost:3000",
+  "https://tasty-creations-coral.vercel.app",
+];
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: allowlist,
   credentials: true,
 };
 
