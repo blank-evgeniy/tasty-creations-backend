@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.get("/", authMiddleware, getRecipeBook);
 router.post("/", authMiddleware, addToRecipeBook);
-router.delete("/", authMiddleware, removeFromRecipeBook);
+router.delete("/:recipeId", authMiddleware, removeFromRecipeBook);
 
 module.exports = router;

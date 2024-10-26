@@ -42,6 +42,16 @@ const getRecipes = async (req, res) => {
   }
 };
 
+const getRandomRecipeId = async (req, res) => {
+  try {
+    const randomRecipe = await Recipe.aggregate([{ $sample: { size: 1 } }]);
+
+    res.status(200).json(randomRecipe[0]._id);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getRecipeById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,6 +105,7 @@ const deleteRecipe = async (req, res) => {
 
 module.exports = {
   getRecipes,
+  getRandomRecipeId,
   getRecipeById,
   createRecipe,
   updateRecipe,
