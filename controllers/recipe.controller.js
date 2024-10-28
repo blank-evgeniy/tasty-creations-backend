@@ -3,35 +3,53 @@ const Recipe = require("../models/recipe.model.js");
 
 const getRecipes = async (req, res) => {
   try {
-    const { category: categoryPath, limit = 10, page = 1 } = req.query; // Получаем category из query параметров
+    const {
+      category: categoryPath,
+      search,
+      sortBy,
+      order,
+      limit = 10,
+      page = 1,
+    } = req.query; // Получаем category из query параметров
 
-    const limitNumber = parseInt(limit);
-    const pageNumber = parseInt(page);
-    let recipes;
-    let totalRecipes;
+    const limitNumber = Math.max(1, parseInt(limit));
+    const pageNumber = Math.max(1, parseInt(page));
+    const sortOrder = order === "desc" ? -1 : 1;
+
+    let recipesQuery = Recipe.find({});
+    let totalRecipesQuery = Recipe.find({});
 
     if (categoryPath) {
       const category = await Category.findOne({ path: categoryPath });
 
       if (!category) {
-        return res.status(404).json({ message: "Категория не найдена" });
+        return res.status(404).json({ message: "Category not found" });
       }
 
-      recipes = await Recipe.find({ category: category._id })
-        .limit(limitNumber)
-        .skip((pageNumber - 1) * limitNumber);
-
-      totalRecipes = await Recipe.find({
-        category: category._id,
-      }).countDocuments();
-    } else {
-      recipes = await Recipe.find({})
-        .limit(limitNumber)
-        .skip((pageNumber - 1) * limitNumber);
-
-      totalRecipes = await Recipe.countDocuments();
+      recipesQuery = recipesQuery.where({ category: category._id });
+      totalRecipesQuery = totalRecipesQuery.where({ category: category._id });
     }
 
+    if (search) {
+      recipesQuery = recipesQuery.where({
+        name: { $regex: search, $options: "i" },
+      });
+      totalRecipesQuery = totalRecipesQuery.where({
+        name: { $regex: search, $options: "i" },
+      });
+    }
+
+    if (sortBy === "time") {
+      recipesQuery = recipesQuery.sort({ time: sortOrder });
+    } else if (sortBy === "calories") {
+      recipesQuery = recipesQuery.sort({ calories: sortOrder });
+    }
+
+    const recipes = await recipesQuery
+      .limit(limitNumber)
+      .skip((pageNumber - 1) * limitNumber);
+
+    const totalRecipes = await totalRecipesQuery.countDocuments();
     const totalPages = Math.ceil(totalRecipes / limitNumber);
 
     res
