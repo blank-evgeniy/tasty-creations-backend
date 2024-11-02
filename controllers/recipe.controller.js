@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Category = require("../models/category.model.js");
 const Recipe = require("../models/recipe.model.js");
 
@@ -73,7 +74,17 @@ const getRandomRecipeId = async (req, res) => {
 const getRecipeById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
     const recipe = await Recipe.findById(id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
     res.status(200).json(recipe);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -92,6 +103,11 @@ const createRecipe = async (req, res) => {
 const updateRecipe = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
     const recipe = await Recipe.findByIdAndUpdate(id, req.body);
 
     if (!recipe) {
@@ -109,6 +125,11 @@ const updateRecipe = async (req, res) => {
 const deleteRecipe = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+
     const recipe = await Recipe.findByIdAndDelete(id, req.body);
 
     if (!recipe) {
